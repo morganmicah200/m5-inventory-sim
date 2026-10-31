@@ -1,0 +1,29 @@
+# Secrets
+.env
+*.p8
+*.pem
+*.key
+
+# Data
+data/
+*.csv
+*.parquet
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# IDE / OS
+.vscode/
+.DS_Store
+Thumbs.db
