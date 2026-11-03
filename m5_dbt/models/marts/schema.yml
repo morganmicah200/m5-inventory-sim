@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: One row per calendar day.
+    columns:
+      - name: date_key
+        data_tests: [not_null, unique]
+
+  - name: dim_item
+    description: One row per product with department and category.
+    columns:
+      - name: item_key
+        data_tests: [not_null, unique]
+
+  - name: dim_store
+    description: One row per store with state.
+    columns:
+      - name: store_key
+        data_tests: [not_null, unique]
+
+  - name: fact_daily_sales
+    description: Daily unit sales with price and revenue. One row per item, store, and day.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [item_key, store_key, date_key]
+    columns:
+      - name: item_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_item')
+                field: item_key
+      - name: store_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_key
+      - name: date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: units_sold
+        data_tests: [not_null]
