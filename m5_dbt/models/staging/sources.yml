@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: raw
+    database: M5
+    schema: RAW
+    description: Raw M5 tables loaded by pipeline/load.py, one table per source CSV, unmodified.
+
+    tables:
+      - name: raw_calendar
+        description: One row per day (d_1 to d_1969) with date, Walmart week, events, and SNAP flags.
+        columns:
+          - name: date
+            data_tests: [not_null, unique]
+          - name: d
+            data_tests: [not_null, unique]
+          - name: wm_yr_wk
+            data_tests: [not_null]
+
+      - name: raw_prices
+        description: Weekly sell price per store and item.
+        columns:
+          - name: store_id
+            data_tests: [not_null]
+          - name: item_id
+            data_tests: [not_null]
+          - name: wm_yr_wk
+            data_tests: [not_null]
+          - name: sell_price
+            data_tests: [not_null]
+
+      - name: raw_sales
+        description: One row per item-store, with 1,941 daily unit-sales columns (d_1 to d_1941).
+        columns:
+          - name: id
+            data_tests: [not_null, unique]
+          - name: item_id
+            data_tests: [not_null]
+          - name: store_id
+            data_tests: [not_null]
