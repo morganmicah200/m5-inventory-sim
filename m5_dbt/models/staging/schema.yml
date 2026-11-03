@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_calendar
+    description: One row per day with clean names, day number, and boolean event/SNAP flags.
+    columns:
+      - name: day_id
+        data_tests: [not_null, unique]
+      - name: calendar_date
+        data_tests: [not_null, unique]
+
+  - name: stg_prices
+    description: Weekly sell price per item and store.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [store_id, item_id, walmart_week_id]
+
+  - name: stg_sales
+    description: Daily unit sales unpivoted to one row per item, store, and day (~59.2M rows).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [item_id, store_id, day_id]
+    columns:
+      - name: day_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_calendar')
+                field: day_id
+      - name: units_sold
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
